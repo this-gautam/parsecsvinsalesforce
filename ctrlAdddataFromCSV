@@ -1,0 +1,100 @@
+////////////////////////////////////////////////////////////////////
+//Type             : Apex Class
+//Name             : ctrlAdddataFromCSV
+//Company          : 
+//Created By       :
+//Last Modified By :
+///////////////////////////////////////////////////////////////////
+public class ctrlAdddataFromCSV{
+    
+    // constructor
+    public ctrlAdddataFromCSV(){
+         
+    } 
+    
+    String[] filelines = new String[]{};
+    List<Account> accstoupload;
+   
+    public static void InsertValues(string strBatchId,string strCSV)
+    {        
+        System.debug('&&&&& ctrlAdddataFromCSV strCSV ' + strCSV );
+        
+        List<Id> idList =  new List<Id>();
+        Map<String,string> map1 = new Map<string,string>();
+        Map<String,string> map2 = new Map<string,string>();
+       
+        List<List<String>> parsedFields = clsAdddataFromCSV.parseCSV(strCSV,true);
+       
+        system.debug('&&&&& size is '+ parsedFields.size());
+        integer k=0;
+       
+       for(List<String> e1: parsedFields){
+       if(k < 5){
+           system.debug('val is '+e1[0]);
+        }   
+        k++;
+          if(e1.size()>0){
+          map1.put(e1[0],e1[1]);
+             }       
+          if(e1.size()>0){
+          map2.put(e1[0],e1[2]);
+         }
+          idList.add(Id.valueOf(e1[0]));
+       }
+      
+      
+      
+      system.debug('&&&&& ' + idList);
+      system.debug('########## ' + map1.get('00QK0000003Te6F'));
+      system.debug('&&&&&&&&&& ' + map2.get('00QK0000003Te6F'));
+      
+       
+      
+      
+      List<Lead> updateLeads = new List<Lead>();
+      integer i=0;
+       for(Lead le:[select id,Name,Company,Raw_Data_Source__c,Site_Feasible_For_Solar__c,Operator_Name__c from Lead where id IN:idList]){
+           string siteFeasible = map1.get(le.id);
+           string operatorname = map2.get(le.id);
+           
+           system.debug('&&&&& id is equal = '+ le.id);
+           system.debug('&&&&& siteFeasible = ' + siteFeasible );
+           system.debug('&&&&& operatorname = ' + operatorname );
+          // try{
+               le.Site_Feasible_For_Solar__c  = siteFeasible;
+               le.Company = le.Name;
+               le.Raw_Data_Source__c = 'ACI';
+               le.Operator_Name__c = operatorname ;
+               le.Data_Stage__c = 'Site Verified';
+               le.site_verified_date__c = system.today();
+               updateLeads.add(le);
+            
+          /* }catch(ListException lee) {
+                System.debug('The following exception has occurred: ' + lee.getMessage());
+                PageReference pageRef = new PageReference('/apex/fileUploader');
+                ApexPages.Message myMsg = new ApexPages.Message(ApexPages.Severity.ERROR,lee.getMessage());
+                ApexPages.addMessage(myMsg);
+                pageRef.setRedirect(true);
+                return pageRef;
+                
+            }*/
+           i++;
+       }
+       system.debug('##### size is is '+updateLeads);
+        system.debug('&&&&& size is is '+updateLeads.size());
+       // try{
+           update updateLeads;
+        // }catch(DMLException er) {
+            /* System.debug('The following exception has occurred: ' + er.getMessage());
+               
+                ApexPages.Message myMsg1 = new ApexPages.Message(ApexPages.Severity.ERROR,er.getMessage());
+                ApexPages.addMessage(myMsg1);*/
+                
+        // }
+      /*  ApexPages.Message myMsg2 = new ApexPages.Message(ApexPages.Severity.INFO,'File Uploaded Successfully');
+        ApexPages.addMessage(myMsg2);    */
+      
+    }  
+    
+    
+    }
