@@ -1,0 +1,41 @@
+////////////////////////////////////////////////////////////////////
+//Type             : Apex Class
+//Name             : ctrlUpdateallrecFromCSV
+//Company          : 
+//Created By       :
+//Last Modified By :
+///////////////////////////////////////////////////////////////////
+
+public class ctrlUpdateallrecFromCSV{
+  
+    public Id strBatchId {get; set;}
+    public static string nameFile{get;set;}
+    public Blob contentFile{get;set;}
+    public Static Blob contentFile1{get;set;}
+     
+    
+    // constructor
+    public ctrlUpdateallrecFromCSV(ApexPages.StandardController controller) {
+        if(contentFile1 != null) {
+                nameFile = contentFile1.toString();
+            }
+    }
+ 
+    public static void ReadFile() {
+    
+            String CheckString = contentFile1.toString();
+            System.Debug('##### nameFile in ctrlUpdateallrecFromCSV' + nameFile ); 
+       // System.Debug('##### Full Content in ctrlUpdateallrecFromCSV' + CheckString  );   
+                
+            Lead[] sourcetemp = new Lead[]{};
+            Lead objs = new Lead();
+            objs.Company = 'Test Company' ;
+            objs.LastName= 'Test Name' ;
+            sourcetemp.add(objs);
+            BatchProcessor objBatchProcess= new BatchProcessor(sourcetemp,CheckString);
+            String strBatchId = Database.executeBatch(objBatchProcess, 200);
+            System.Debug('##### Batch ID is ' + strBatchId  );
+    }
+    
+    
+}
