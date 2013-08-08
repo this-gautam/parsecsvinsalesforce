@@ -1,0 +1,15 @@
+<apex:page sidebar="false" standardController="Lead" extensions="ctrlUpdateallrecFromCSV" >
+    <apex:message />
+        <apex:form >
+            <apex:sectionHeader title="Upload data from CSV file"/>
+             <apex:pagemessages />
+             <apex:pageBlock >
+             
+             <center>
+             <apex:inputFile value="{!contentFile1}" filename="{!nameFile}" /> 
+             <apex:commandButton action="{!ReadFile}" value="Upload File" id="theButton" style="width:70px;"/>
+             <br/> <br/> <font color="red">  </font>
+             </center>  
+       </apex:pageBlock>       
+   </apex:form>   
+</apex:page>
